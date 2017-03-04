@@ -17,7 +17,7 @@ php composer.phar require --prefer-dist perochak/yii2-gii-gentelella "*"
 or add
 
 ```json
-"perochak/yii2-gii-gentelella": "*"
+"perochak/yii2-gii-gentelella": "1.0.0"
 ```
 
 to the require section of your composer.json.
