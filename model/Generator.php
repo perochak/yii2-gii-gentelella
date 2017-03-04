@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\gii\generators\model;
+namespace perochak\gii\model;
 
 use Yii;
 use yii\db\ActiveQuery;

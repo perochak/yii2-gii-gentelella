@@ -13,6 +13,7 @@ echo "<?php\n";
 ?>
 
 use yii\helpers\Html;
+use fedemotta\datatables\DataTables;
 use <?= $generator->indexWidgetType === 'grid' ? "yii\\grid\\GridView" : "yii\\widgets\\ListView" ?>;
 
 /* @var $this yii\web\View */
@@ -22,9 +23,18 @@ use <?= $generator->indexWidgetType === 'grid' ? "yii\\grid\\GridView" : "yii\\w
 $this->title = <?= $generator->generateString(Inflector::pluralize(Inflector::camel2words($generator->getModelNameForView()))) ?>;
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="<?= Inflector::camel2id($generator->getModelNameForView()) ?>-index">
+<div class="row">  
+    <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel <?= Inflector::camel2id($generator->getModelNameForView()) ?>-index">
+            <div class="x_title">
+                <h2><?= "<?php echo " ?>Html::encode($this->title) ?></h2>
+                <div class="clearfix"></div>
+            </div>
 
-    <h1><?= "<?php echo " ?>Html::encode($this->title) ?></h1>
+                <div class="x_content">
+                    
+                
+    
 <?php if(!empty($generator->searchModelClass)): ?>
 <?= "    <?php " . ($generator->indexWidgetType === 'grid' ? "// " : "") ?>echo $this->render('_search', ['model' => $searchModel]); ?>
 <?php endif; ?>
@@ -32,12 +42,39 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= "<?php echo " ?>Html::a(<?= $generator->generateString('Create {modelClass}', ['modelClass' => Inflector::camel2words($generator->getModelNameForView())]) ?>, ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-    <?= "<?php " ?>\yii\widgets\Pjax::begin(['enablePushState' => false,'timeout' => 3000]); ?>
+
 <?php if ($generator->indexWidgetType === 'grid'): ?>
-    <?= "<?php echo " ?>GridView::widget([
+    <?= "<?php  " ?>DataTables::widget([
         'dataProvider' => $dataProvider,
+        'clientOptions' => [
+        "lengthMenu"=> [[20,-1], [20,Yii::t('app',"All")]],
+        "info"=>false,
+        "responsive"=>true, 
+        "dom"=> 'lfTrtip',
+        "tableTools"=>[
+                "aButtons"=> [  
+                    [
+                    "sExtends"=> "copy",
+                    "sButtonText"=> Yii::t('app',"Copy to clipboard")
+                    ],[
+                    "sExtends"=> "csv",
+                    "sButtonText"=> Yii::t('app',"Save to CSV")
+                    ],[
+                    "sExtends"=> "xls",
+                    "oSelectorOpts"=> ["page"=> 'current']
+                    ],[
+                    "sExtends"=> "pdf",
+                    "sButtonText"=> Yii::t('app',"Save to PDF")
+                    ],[
+                    "sExtends"=> "print",
+                    "sButtonText"=> Yii::t('app',"Print")
+                    ],
+                ]
+            ]
+        ],
         <?= !empty($generator->searchModelClass) ? "'filterModel' => \$searchModel,\n        'columns' => [\n" : "'columns' => [\n"; ?>
-<?php
+['class' => 'yii\grid\SerialColumn'],
+            <?php
 $count = 0;
 if (($tableSchema = $generator->getTableSchema()) === false) {
     foreach ($generator->getColumnNames() as $name) {
@@ -66,7 +103,6 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         ],
     ]);
     ?>
-    <?= "<?php " ?>\yii\widgets\Pjax::end(); ?>
 <?php else: ?>
     <?= "<?php echo " ?>ListView::widget([
         'dataProvider' => $dataProvider,
@@ -77,4 +113,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
     ]) ?>
 <?php endif; ?>
 
+</div>
+            </div>
+    </div>
 </div>

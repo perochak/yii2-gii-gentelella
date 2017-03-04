@@ -14,5 +14,8 @@
         "psr-4": {
             "perochak\\gii\\": ""
         }
-    }
+    },
+    "require": {
+        "fedemotta/yii2-widget-datatables": "*"
+    }    
 }

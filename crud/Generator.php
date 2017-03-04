@@ -228,28 +228,43 @@ class Generator extends \yii\gii\Generator
     public function generateActiveField($attribute)
     {
         
-        $template='<div class="form-group">
+        $template='
                         {label}
                         <div class="col-md-6 col-sm-6 col-xs-12">
                           {input}{error}{hint}
                         </div>
-                      </div>';
+                      ';
+        $labeloptions="['class'=>'control-label col-md-3 col-sm-3 col-xs-12']";
+
         $tableSchema = $this->getTableSchema();
         if ($tableSchema === false || !isset($tableSchema->columns[$attribute])) {
             if (preg_match('/^(password|pass|passwd|passcode)$/i', $attribute)) {
-                return "\$form->field(\$model, '$attribute')->passwordInput()";
+                return "\$form->field(\$model, '$attribute',['template'=>'$template','labelOptions'=>$labeloptions])->passwordInput()";
             } else {
-                return "\$form->field(\$model, '$attribute')";
+                return "\$form->field(\$model, '$attribute',['template'=>'$template','labelOptions'=>$labeloptions])";
             }
         }
         $column = $tableSchema->columns[$attribute];
         if ($column->phpType === 'boolean') {
             return "\$form->field(\$model, '$attribute')->checkbox()";
         } elseif ($column->type === 'text') {
-            return "\$form->field(\$model, '$attribute')->textarea(['rows' => 6])";
+            return "\$form->field(\$model, '$attribute',['template'=>'$template','labelOptions'=>$labeloptions])->textarea(['rows' => 6])";
         } else {
             if (preg_match('/^(password|pass|passwd|passcode)$/i', $column->name)) {
                 $input = 'passwordInput';
+            }elseif (preg_match('/^(document|image|photo)$/i', $column->name)) {
+                $input = 'fileInput';
+            }elseif (preg_match('/^(slug)$/i', $column->name)) {
+                $input = 'hiddenInput';
+            }elseif (preg_match('/^(parent_id|category_id|status)$/i', $column->name)) {
+                $dropDownOptions = [];
+                if($column->name=='status'){
+                    $dropDownOptions[0]=Yii::t('app','Inactive');
+                    $dropDownOptions[1]=Yii::t('app','Active');
+                    
+                }
+                return "\$form->field(\$model, '$attribute',['template'=>'$template','labelOptions'=>$labeloptions])->dropDownList("
+                    . preg_replace("/\n\s*/", ' ', VarDumper::export($dropDownOptions)).", ['prompt' => '--Select--'])";
             } else {
                 $input = 'textInput';
             }
@@ -258,12 +273,12 @@ class Generator extends \yii\gii\Generator
                 foreach ($column->enumValues as $enumValue) {
                     $dropDownOptions[$enumValue] = Inflector::humanize($enumValue);
                 }
-                return "\$form->field(\$model, '$attribute')->dropDownList("
+                return "\$form->field(\$model, '$attribute',['template'=>'$template','labelOptions'=>$labeloptions])->dropDownList("
                     . preg_replace("/\n\s*/", ' ', VarDumper::export($dropDownOptions)).", ['prompt' => ''])";
             } else if ($column->phpType !== 'string' || $column->size === null) {
-                return "\$form->field(\$model, '$attribute')->$input()";
+                return "\$form->field(\$model, '$attribute',['template'=>'$template','labelOptions'=>$labeloptions])->$input()";
             } else {
-                return "\$form->field(\$model, '$attribute',['template'=>$template])->$input(['maxlength' => $column->size])";
+                return "\$form->field(\$model, '$attribute',['template'=>'$template','labelOptions'=>$labeloptions])->$input(['maxlength' => $column->size])";
             }
         }
     }
