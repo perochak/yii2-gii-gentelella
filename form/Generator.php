@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\gii\generators\form;
+namespace perochak\gii\form;
 
 use Yii;
 use yii\base\Model;
@@ -32,7 +32,7 @@ class Generator extends \yii\gii\Generator
      */
     public function getName()
     {
-        return 'Form Generator';
+        return 'Gentelella: Form Generator';
     }
 
     /**

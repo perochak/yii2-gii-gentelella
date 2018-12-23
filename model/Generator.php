@@ -49,7 +49,7 @@ class Generator extends \yii\gii\Generator
      */
     public function getName()
     {
-        return 'Model Generator';
+        return 'Gentelella: Model Generator';
     }
 
     /**

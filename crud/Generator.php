@@ -41,7 +41,7 @@ class Generator extends \yii\gii\Generator
      */
     public function getName()
     {
-        return 'Gentelella based CRUD Generator';
+        return 'Gentelella: CRUD Generator';
     }
 
     /**
